@@ -15,18 +15,16 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
+
 import de.tud.textureAttack.controller.ActionController;
+import de.tud.textureAttack.model.algorithms.AbstractAlgorithm;
 
 public class StatusBar extends JPanel {
 
@@ -35,7 +33,8 @@ public class StatusBar extends JPanel {
 	private JProgressBar progressBar;
 	private JButton chancelButton;
 	private ActionController actionController;
-	private Enum task;
+	private AbstractAlgorithm algorithm;
+	private String task;
 
 
 	public StatusBar(String initStatus, ActionController actionController, int parentWidth) {
@@ -73,15 +72,17 @@ public class StatusBar extends JPanel {
 
 	
 	private void chancelButtonClick() {
-		// TODO Auto-generated method stub	
+		algorithm.cancel(true);
 	}
 	
 	public void setStatus(String newStatus) {
 		statusLabel.setText(newStatus);
 	}
 	
-	public void startTask(Enum task){
+	public void startTask(String task, AbstractAlgorithm algo){
 		this.task = task;
+		setStatus(task);
+		algorithm = algo;
 		chancelButton.setEnabled(true);
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	}
@@ -114,42 +115,14 @@ public class StatusBar extends JPanel {
 		return progressBar.getValue();
 	}
 	
-	public void done(Enum taskName){
+	public void done(){
 		chancelButton.setEnabled(false);
 		setCursor(null); // turn off the wait cursor
-		System.out.println(taskName.toString()+" done!");
-		setStatus(taskName.toString()+" done!");
+		System.out.println(task.toString()+" done!");
+		setStatus(task.toString()+" done!");
 	}
 	
-	
-	
-	
 
-		
-		
-//		/*
-//		 * Main task. Executed in background thread.
-//		 */
-//		@Override
-//		public Void doInBackground() {
-//			int progress = 0;
-//			// Initialize progress property.
-//			setProgress(0);
-//			while (progress < 100) {
-//				// Sleep for up to one second.
-//					
-//				// TODO
-//					
-//				setProgress(Math.min(progress, 100));
-//			}
-//			return null;
-//		}
-
-		/*
-		 * Executed in event dispatching thread
-		 */
-	
-	
 	
 
 

@@ -10,7 +10,7 @@ import de.tud.textureAttack.controller.ActionController;
 * Stellt im UML-Klassendiagramm "Product" dar, von der konkrete
 * Klassen abgeleitet werden, die auch instanziiert werden können.
 */
-public abstract class AbstractAlgorithm extends SwingWorker<Void, Void>{
+public abstract class AbstractAlgorithm extends SwingWorker<Object, Void>{
 	
 	public static enum AlgoTypes{
 		ATTACKS, SELECTIONS
@@ -26,7 +26,9 @@ public abstract class AbstractAlgorithm extends SwingWorker<Void, Void>{
     }
 
     
-    protected abstract Void doInBackground();
+    protected abstract Object doInBackground();
+    
+    
     
     public boolean chancel(boolean mayInterruptIfRunning){
 		System.out.println(name.toString()+" chanceld!");
@@ -34,9 +36,7 @@ public abstract class AbstractAlgorithm extends SwingWorker<Void, Void>{
 		return this.cancel(mayInterruptIfRunning);		
     }
     
-    public void done(){
-    	actionController.getStatusBar().done(name);
-    }
+
 
     public AbstractAlgorithm(Enum name, AlgoTypes type, ActionController actionController) {
     	super();

@@ -27,13 +27,14 @@ public class GrabCutSelection extends AbstractSelectionAlgorithm {
 	 * options were set from the given option object
 	 */
 	@Override
-	public void init(BufferedImage img, Options options) {
+	public void init(BufferedImage img, Options options, String imageName) {
 		this.foregroundColor = (Color) options
 				.getOption(Options.OptionIdentifierEnum.GrabCut_forColor);
 		this.backgroundColor = (Color) options
 				.getOption(Options.OptionIdentifierEnum.GrabCut_backColor);
 		this.image = img;
 		initialized = true;
+		this.imageName = imageName;
 		JOptionPane.showMessageDialog(null, "GrabCut is not implemented yet");
 
 	}
@@ -54,9 +55,10 @@ public class GrabCutSelection extends AbstractSelectionAlgorithm {
 	}
 
 	@Override
-	protected Void doInBackground() {
+	protected boolean[][] doInBackground() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

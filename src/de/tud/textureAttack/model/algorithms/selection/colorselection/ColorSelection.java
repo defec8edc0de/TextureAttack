@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
+import java.util.concurrent.ExecutionException;
 
 import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.algorithms.AbstractAlgorithm;
@@ -43,7 +44,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 	 * options were set from the given option object
 	 */
 	@Override
-	public void init(BufferedImage img, Options options) {
+	public void init(BufferedImage img, Options options, String imageName) {
 		this.colorThreshold = (int) options
 				.getOption(Options.OptionIdentifierEnum.ColorSelection_ColorThreshold);
 		this.minRegionThreshold = (int) options
@@ -51,6 +52,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 		this.image = img;
 		initialized = true;
 		visited = new boolean[img.getHeight()][img.getWidth()];
+		this.imageName = imageName;
 		// FrequencyComparator frequencyComparator = new FrequencyComparator();
 		colorRegionsList = new ArrayList<ColorRegions>();
 
@@ -65,8 +67,15 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 	@Override
 	public boolean[][] executeSelection() {
 		if (initialized) {
-			boolean[][] backgroundRaster = getBackground();
-			return backgroundRaster;
+			try {
+				actionController.getStatusBar().startTask("ColorSelection on "+imageName,this);
+				execute();
+				actionController.getStatusBar().done();
+				return (boolean[][]) get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+				return null;
+			}
 		} else {
 			System.out.println("ColorSelection-Algorithm not initialized!");
 			return null;
@@ -187,15 +196,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 	 * pixels flooded regions of the pixels color
 	 */
 	private void findColorRegions() {
-		run();
-	}
-
-
-
-	@Override
-	protected Void doInBackground() {
-//		actionController.setProgressCount(image.getWidth()*image.getHeight());
-//		int i = 0;
+		actionController.setProgressCount(image.getWidth());
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				if (!visited[y][x]) {
@@ -215,12 +216,18 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 					} else
 						colorRegionsList.get(index).addRegion(region);
 				}
-//				i++;
-//				actionController.setProgress(i);
 			}
+			if ((x % 5) == 0) actionController.setProgress(x);
 		}
 
-		return null;
+
+	}
+
+
+
+	@Override
+	protected boolean[][] doInBackground() {
+		return getBackground();
 	}
 
 }

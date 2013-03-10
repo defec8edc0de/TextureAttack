@@ -178,7 +178,7 @@ public class AdvancedTextureImage {
 		if (editedBufferedImage == null)
 			loadImage();
 		// get Background Pixels of image with selectAlgo
-		selectAlgo.init(editedBufferedImage, options);
+		selectAlgo.init(editedBufferedImage, options, IOUtils.getFileNameFromPath(absoluteFilePath));
 		boolean[][] backgroundRaster = null;
 		backgroundRaster = selectAlgo.executeSelection();
 
