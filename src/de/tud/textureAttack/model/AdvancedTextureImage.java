@@ -16,6 +16,7 @@ import model.TEXFile;
 import model.TextureImage;
 import ddsutil.DDSUtil;
 import ddsutil.MipMapsUtil;
+import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.algorithms.Options;
 import de.tud.textureAttack.model.algorithms.attacks.AbstractAttackAlgorithm;
 import de.tud.textureAttack.model.algorithms.selection.AbstractSelectionAlgorithm;
@@ -23,6 +24,7 @@ import de.tud.textureAttack.model.io.IOUtils;
 import de.tud.textureAttack.model.io.InvalidTextureException;
 import de.tud.textureAttack.model.utils.DXTBufferDecompressor;
 import de.tud.textureAttack.model.utils.ImageProcessingToolKit;
+import de.tud.textureAttack.view.components.StatusBar;
 
 public class AdvancedTextureImage {
 
@@ -172,23 +174,27 @@ public class AdvancedTextureImage {
 	 * @param attack
 	 */
 	public void processManipulation(AbstractAttackAlgorithm attackAlgo,
-			AbstractSelectionAlgorithm selectAlgo, Options options) {
+			AbstractSelectionAlgorithm selectAlgo, Options options, StatusBar statusBar) {
 
 		// texture already loaded?
 		if (editedBufferedImage == null)
 			loadImage();
 		// get Background Pixels of image with selectAlgo
 		selectAlgo.init(editedBufferedImage, options, IOUtils.getFileNameFromPath(absoluteFilePath));
-		boolean[][] backgroundRaster = null;
-		backgroundRaster = selectAlgo.executeSelection();
+		Object backgroundRaster = null;
+		
+		backgroundRaster = statusBar.startTask(IOUtils.getFileNameFromPath(absoluteFilePath)+" background selection", selectAlgo);
 
 		// if selectalgo wasn't successful, mark image as todo
 		if (backgroundRaster == null) {
 			state = EditState.todo;
 		} else {
 			// attack the image with given attaclAlgo
-			attackAlgo.init(editedBufferedImage, backgroundRaster, options);
-			editedBufferedImage = attackAlgo.executeAttack();
+			attackAlgo.init(editedBufferedImage, (boolean[][])backgroundRaster, options);
+			Object o = statusBar.startTask(IOUtils.getFileNameFromPath(absoluteFilePath)+" background manipulation", attackAlgo);
+			if (o instanceof BufferedImage){
+				editedBufferedImage = (BufferedImage) o;
+
 			// save the resulting image tmp, before release memory with
 			// resetImage() and set state to finished
 			File absolutPath = new File("");
@@ -202,7 +208,9 @@ public class AdvancedTextureImage {
 					+ TMP_PATH, fileName, "png");
 			state = EditState.finished;
 		}
-
+		}
+		
+		
 		resetImage();
 
 	}

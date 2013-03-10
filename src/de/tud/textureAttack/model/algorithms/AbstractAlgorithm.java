@@ -1,5 +1,7 @@
 package de.tud.textureAttack.model.algorithms;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.swing.SwingWorker;
 
 import de.tud.textureAttack.controller.ActionController;
@@ -18,9 +20,11 @@ public abstract class AbstractAlgorithm extends SwingWorker<Object, Void>{
 	
 	
     private Enum name;
-    private ActionController actionController;
+    protected ActionController actionController;
     private AlgoTypes type;
  
+    protected Object result;
+    
     public Enum getName() {
         return name;
     }
@@ -28,13 +32,20 @@ public abstract class AbstractAlgorithm extends SwingWorker<Object, Void>{
     
     protected abstract Object doInBackground();
     
-    
-    
-    public boolean chancel(boolean mayInterruptIfRunning){
-		System.out.println(name.toString()+" chanceld!");
-		actionController.setStatus(name.toString()+" chanceld!");
-		return this.cancel(mayInterruptIfRunning);		
+    protected void done(){
+    	try {
+    		if (isCancelled()) {
+    			result = null;
+    		}
+    		else result = get();
+			actionController.getStatusBar().done();
+			
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
     }
+    
+    
     
 
 
@@ -43,15 +54,18 @@ public abstract class AbstractAlgorithm extends SwingWorker<Object, Void>{
     	this.actionController = actionController;
     	this.type = type;
     	this.name = name;
+    	this.result = null;
    
     }
-    
-    
-
 
 
 	public Object getType() {
 		return type;
+	}
+
+
+	public Object getResult() {
+		return result;
 	}
 	
 	

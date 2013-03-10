@@ -36,6 +36,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 		image = null;
 		visited = null;
 		colorRegionsList = null;
+		result = null;
 		this.actionController = actionController;
 	}
 
@@ -53,6 +54,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 		initialized = true;
 		visited = new boolean[img.getHeight()][img.getWidth()];
 		this.imageName = imageName;
+		result = new boolean[img.getHeight()][img.getWidth()];
 		// FrequencyComparator frequencyComparator = new FrequencyComparator();
 		colorRegionsList = new ArrayList<ColorRegions>();
 
@@ -67,15 +69,8 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 	@Override
 	public boolean[][] executeSelection() {
 		if (initialized) {
-			try {
-				actionController.getStatusBar().startTask("ColorSelection on "+imageName,this);
-				execute();
-				actionController.getStatusBar().done();
-				return (boolean[][]) get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-				return null;
-			}
+				initialized = false;
+				return getBackground();
 		} else {
 			System.out.println("ColorSelection-Algorithm not initialized!");
 			return null;
@@ -217,6 +212,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 						colorRegionsList.get(index).addRegion(region);
 				}
 			}
+			if  (isCancelled()) { actionController.setProgress(image.getWidth()); return;}
 			if ((x % 5) == 0) actionController.setProgress(x);
 		}
 
@@ -227,7 +223,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 
 	@Override
 	protected boolean[][] doInBackground() {
-		return getBackground();
+		return executeSelection();
 	}
 
 }

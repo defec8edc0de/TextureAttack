@@ -10,6 +10,7 @@ import de.tud.textureAttack.model.algorithms.Options;
 import de.tud.textureAttack.model.algorithms.attacks.AbstractAttackAlgorithm;
 import de.tud.textureAttack.model.algorithms.selection.AbstractSelectionAlgorithm;
 import de.tud.textureAttack.model.io.InvalidTextureException;
+import de.tud.textureAttack.view.components.StatusBar;
 
 public class WorkingImageSet {
 
@@ -173,12 +174,26 @@ public class WorkingImageSet {
 	 * @param options
 	 */
 	public void manipulateAllImages(AbstractAttackAlgorithm attackAlgorithm,
-			AbstractSelectionAlgorithm selectAlgorithm, Options options) {
+			AbstractSelectionAlgorithm selectAlgorithm, Options options, StatusBar statusBar) {
+		int i = 0;
+		actionController.getStatusBar().setImageProgressParameter(imageList.size());
+		actionController.getStatusBar().setImageProgress(i);
 		for (AdvancedTextureImage advImage : imageList) {
 			advImage.processManipulation(attackAlgorithm, selectAlgorithm,
-					options);
+					options, statusBar);
+			i++;
+			actionController.getStatusBar().setImageProgress(i);
 			actionController.setTextureIcon(advImage);
+//			if (actionController.getStatusBar().getCanceledAutoAttack())
+//				break;
+			
+			actionController.getStatusBar().resetAlgorithms();
+			attackAlgorithm = (AbstractAttackAlgorithm) actionController.getAlgorithm(attackAlgorithm.getName());
+			selectAlgorithm = (AbstractSelectionAlgorithm) actionController.getAlgorithm(selectAlgorithm.getName());
 		}
+		
+		actionController.getStatusBar().doneAll();
+
 
 	}
 

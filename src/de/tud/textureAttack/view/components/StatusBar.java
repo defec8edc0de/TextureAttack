@@ -15,16 +15,27 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.algorithms.AbstractAlgorithm;
+import de.tud.textureAttack.model.algorithms.attacks.AbstractAttackAlgorithm;
+import de.tud.textureAttack.model.algorithms.selection.AbstractSelectionAlgorithm;
 
 public class StatusBar extends JPanel {
 
@@ -35,6 +46,11 @@ public class StatusBar extends JPanel {
 	private ActionController actionController;
 	private AbstractAlgorithm algorithm;
 	private String task;
+	private Object taskResult;
+	private JDialog modalDialog;
+	private JProgressBar imageProgress;
+	private boolean canceledAutoAttack;
+
 
 
 	public StatusBar(String initStatus, ActionController actionController, int parentWidth) {
@@ -46,6 +62,52 @@ public class StatusBar extends JPanel {
 		statusLabel.setSize(new Dimension(parentWidth - 80, 20));
 		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		add(statusLabel, BorderLayout.WEST);
+		
+		canceledAutoAttack = false;
+		imageProgress = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+		imageProgress.setPreferredSize(new Dimension(150, 20));
+		imageProgress.setValue(0);
+
+		modalDialog = new JDialog();
+		modalDialog.setTitle("Working..");
+		modalDialog.setModal(true);
+		modalDialog.add(imageProgress);
+		modalDialog.setLocationRelativeTo(this);
+		modalDialog.addWindowListener(new WindowListener() {
+			
+
+			@Override
+			public void windowOpened(WindowEvent e) {				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				canceledAutoAttack = true;	
+				chancelButtonClick();
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {				
+			}
+		});
+		modalDialog.pack();
+
 
 		chancelButton = new JButton("Chancel");
 		chancelButton.setEnabled(false);
@@ -79,12 +141,23 @@ public class StatusBar extends JPanel {
 		statusLabel.setText(newStatus);
 	}
 	
-	public void startTask(String task, AbstractAlgorithm algo){
+	public Object startTask(String task, AbstractAlgorithm algo){
 		this.task = task;
 		setStatus(task);
 		algorithm = algo;
 		chancelButton.setEnabled(true);
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		taskResult = null;
+
+		algorithm.execute();							
+		if (!modalDialog.isVisible())
+			modalDialog.setVisible(true);
+		
+		
+		taskResult = algorithm.getResult();
+		return taskResult;
+		
+
 	}
 
 	public void setProgressCount(int i) {
@@ -115,13 +188,47 @@ public class StatusBar extends JPanel {
 		return progressBar.getValue();
 	}
 	
+	public void doneAll(){
+		modalDialog.setVisible(false);	
+		canceledAutoAttack = false;
+		System.out.println("All Textures processed!");
+		setStatus("All Textures processed!");
+	}
+	
+	public boolean getCanceledAutoAttack(){
+		return canceledAutoAttack;
+	}
+	
 	public void done(){
 		chancelButton.setEnabled(false);
 		setCursor(null); // turn off the wait cursor
-		System.out.println(task.toString()+" done!");
-		setStatus(task.toString()+" done!");
+		modalDialog.setVisible(false);
+		if (algorithm.isCancelled()){
+			System.out.println(task.toString()+" canceled!");
+			setStatus(task.toString()+" canceled!");
+		}
+		else {
+			System.out.println(task.toString()+" done!");
+			setStatus(task.toString()+" done!");			
+		}
 	}
 	
+	public void setImageProgressParameter(int max){
+		imageProgress.setStringPainted(true);
+		imageProgress.setValue(0);
+			imageProgress.setMaximum(max);
+	}
+	
+	public void setImageProgress(int i){
+		imageProgress.setValue(i);
+		imageProgress.setString(i+"/"+imageProgress.getMaximum()+" processing...");
+		imageProgress.paint(imageProgress.getGraphics());
+	}
+
+
+	public void resetAlgorithms() {
+		actionController.resetAlgorithms();
+	}
 
 	
 

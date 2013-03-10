@@ -42,6 +42,14 @@ public abstract class AbstractAlgorithmFactory {
     	}
        return null;
     }
+    
+    public boolean removeAlgorithm(AbstractAlgorithm algorithm){
+    	if (algorithms.contains(algorithm)){
+    		algorithms.remove(algorithm);
+    		return true;
+    	}
+    	else return false;
+    }
 
  
     /**
@@ -51,4 +59,12 @@ public abstract class AbstractAlgorithmFactory {
      *
      */
     protected abstract void createAlgorithm(ActionController actionController);
+
+	public boolean contains(Enum name) {
+		boolean result = false;
+		for( int i = 0; i < algorithms.size(); i++){
+			if (algorithms.get(i).getName().equals(name)) return true;
+		}
+		return result;
+	}
 }

@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import de.tud.textureAttack.model.AdvancedTextureImage;
 import de.tud.textureAttack.model.WorkingImageSet;
 import de.tud.textureAttack.model.actionHandler.ToolsMenuActionHandler;
+import de.tud.textureAttack.model.algorithms.AbstractAlgorithm;
 import de.tud.textureAttack.model.algorithms.AbstractAlgorithmFactory;
 import de.tud.textureAttack.model.algorithms.Options;
 import de.tud.textureAttack.model.algorithms.Options.AttackToolEnum;
@@ -189,7 +190,7 @@ public class ActionController {
 				(AbstractAttackAlgorithm) attackAlgoFactory
 						.getAlgorithm(attack),
 				(AbstractSelectionAlgorithm) selectionAlgoFactory
-						.getAlgorithm(selection), options);
+						.getAlgorithm(selection), options, getStatusBar());
 	}
 
 	/**
@@ -241,15 +242,18 @@ public class ActionController {
 		String imagePath = mainWindow.getContentContainer()
 				.getImageScrollPane().getSelectedImageByPath();
 		if (imagePath != null) {
+			getStatusBar().setImageProgressParameter(1);
+			getStatusBar().setImageProgress(1);
 			workingImageSet
 					.getAdvancedTextureImageFromAbsoluteFilePath(imagePath)
 					.processManipulation(
 							(AbstractAttackAlgorithm) attackAlgoFactory
 									.getAlgorithm(attack),
 							(AbstractSelectionAlgorithm) selectionAlgoFactory
-									.getAlgorithm(selection), options);
+									.getAlgorithm(selection), options, getStatusBar());
 			setTextureIcon(workingImageSet
 					.getAdvancedTextureImageFromAbsoluteFilePath(imagePath));
+			resetAlgorithms();
 
 		}
 		else {
@@ -259,6 +263,25 @@ public class ActionController {
 
 	public StatusBar getStatusBar() {
 		return mainWindow.getStatusBar();
+	}
+
+	/**
+	 *Resets/Creates new the given algorithms in the factory
+	 * @param algoList
+	 */
+	public void resetAlgorithms() {
+		attackAlgoFactory = new AttackAlgorithms(this);
+		selectionAlgoFactory = new SelectionAlgorithms(this);		
+	}
+
+	public AbstractAlgorithm getAlgorithm(Enum name) {
+		if (attackAlgoFactory.contains(name)){
+			return attackAlgoFactory.getAlgorithm(name);
+		}
+		else if (selectionAlgoFactory.contains(name)){
+			return selectionAlgoFactory.getAlgorithm(name);
+		}
+		return null;
 	}
 
 }

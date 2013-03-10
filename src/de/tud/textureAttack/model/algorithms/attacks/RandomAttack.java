@@ -19,13 +19,12 @@ public class RandomAttack extends AbstractAttackAlgorithm {
    
 	private int randomness;
 	private BufferedImage image;
-	private boolean[][] backgroundRaster;
 	
 	public RandomAttack(ActionController actionController) {
         super(Options.AttackToolEnum.Random, AbstractAlgorithm.AlgoTypes.ATTACKS, actionController); 
         randomness = 10;
     	image = null;
-    	backgroundRaster = null;        
+    	result = null;
     }
 
 	
@@ -44,12 +43,16 @@ public class RandomAttack extends AbstractAttackAlgorithm {
 	@Override
 	public BufferedImage executeAttack() {
 		if(initialized){
+			initialized = false;
+			actionController.setProgressCount(image.getWidth());
 			for (int x = 0; x < image.getWidth();x++){
 				for (int y = 0; y < image.getHeight();y++){
-					if (backgroundRaster[y][x]){
+					if (((boolean[][])result)[y][x]){
 						image.setRGB(x, y, generateRandomRGB(randomness,ImageProcessingToolKit.getRed(image, x, y), ImageProcessingToolKit.getGreen(image, x, y), ImageProcessingToolKit.getBlue(image, x, y),ImageProcessingToolKit.getAlpha(image, x, y)));
 					}
 				}
+				if  (isCancelled()) { actionController.setProgress(image.getWidth()); return null;}
+				if ((x % 5) == 0) actionController.setProgress(x);
 			}
 			return image;
 		}
@@ -75,7 +78,7 @@ public class RandomAttack extends AbstractAttackAlgorithm {
 	public void init(BufferedImage img, boolean[][] backgroundRaster, Options options) {
 		this.randomness = (int) options.getOption(Options.OptionIdentifierEnum.RandomAttack_Randomness);
         this.image = img;
-        this.backgroundRaster = backgroundRaster;
+        this.result = backgroundRaster;
 		initialized = true;
 	}
 
@@ -83,8 +86,7 @@ public class RandomAttack extends AbstractAttackAlgorithm {
 
 
 	@Override
-	protected Void doInBackground() {
-		// TODO Auto-generated method stub
-		return null;
+	protected BufferedImage doInBackground() {
+		return executeAttack();
 	}
 }
