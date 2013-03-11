@@ -55,7 +55,6 @@ public class ContentContainer extends JSplitPane {
 	 */
 	private void initializeComponents() {
 
-		
 		// if you resize manualy the application, this will fix..a bit..the
 		// right tools splitpane
 		setResizeWeight(0.9999999999);
@@ -78,18 +77,19 @@ public class ContentContainer extends JSplitPane {
 		imagePreviewScrollPane.setMinimumSize(minimumSize);
 
 		toolBoxTabbedWrapper = new ToolBoxTabbedWrapper(actionController);
-//		toolBoxTabbedWrapper.setMinimumSize(new Dimension(220, 50));
-//		toolBoxTabbedWrapper.setMaximumSize(new Dimension(220, 50));
-
+		// toolBoxTabbedWrapper.setMinimumSize(new Dimension(220, 50));
+		// toolBoxTabbedWrapper.setMaximumSize(new Dimension(220, 50));
 
 		leftPanes.add(imageScrollPane);
 		leftPanes.add(imagePreviewScrollPane);
 
-		toolBoxScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//		toolBoxScrollPane.setMinimumSize(new Dimension(220, 50));
-//		toolBoxScrollPane.setMaximumSize(new Dimension(220, 50));
+		toolBoxScrollPane = new JScrollPane(
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		// toolBoxScrollPane.setMinimumSize(new Dimension(220, 50));
+		// toolBoxScrollPane.setMaximumSize(new Dimension(220, 50));
 		toolBoxScrollPane.setViewportView(toolBoxTabbedWrapper);
-		
+
 		rightPanes.add(toolBoxScrollPane);
 
 		add(leftPanes);
@@ -171,7 +171,5 @@ public class ContentContainer extends JSplitPane {
 	public ImagePreviewScrollPane getImagePreviewScrollPane() {
 		return imagePreviewScrollPane;
 	}
-
-
 
 }

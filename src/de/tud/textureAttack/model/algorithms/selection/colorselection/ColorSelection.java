@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Sebastian Funke.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Sebastian Funke - initial API and implementation
+ ******************************************************************************/
 package de.tud.textureAttack.model.algorithms.selection.colorselection;
 
 import java.awt.Color;
@@ -6,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
-import java.util.concurrent.ExecutionException;
 
 import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.algorithms.AbstractAlgorithm;
@@ -31,7 +40,7 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 
 	public ColorSelection(ActionController actionController) {
 		super(Options.SelectionToolEnum.ColorSelection,
-				AbstractAlgorithm.AlgoTypes.SELECTIONS,actionController);
+				AbstractAlgorithm.AlgoTypes.SELECTIONS, actionController);
 		colorThreshold = 0;
 		image = null;
 		visited = null;
@@ -59,8 +68,6 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 		colorRegionsList = new ArrayList<ColorRegions>();
 
 	}
-	
-	
 
 	/**
 	 * Executes the background selection algorithm and returns a boolean[][] in
@@ -69,8 +76,8 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 	@Override
 	public boolean[][] executeSelection() {
 		if (initialized) {
-				initialized = false;
-				return getBackground();
+			initialized = false;
+			return getBackground();
 		} else {
 			System.out.println("ColorSelection-Algorithm not initialized!");
 			return null;
@@ -158,19 +165,31 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 				new ColorRegionComparator());
 		PriorityQueue<Pair<Integer, ArrayList<Point>>> regions = colorRegionsList
 				.get(0).getRegions();
+		// Checks the top Region, if the count is bigger then
+		// image.Width/2*minRegionThreshold, if false
+		// the Image should be manipulated with a better algorithm, because
+		// background is maybe not found
 		// get the color:List<Regions> from the sorted colorRegionList with the
 		// biggest region and iterate over this regions priorityQueue with
 		// adding every pixel in the regions to the background array, if the
 		// region is big enough (specified by minRegionThreshold)
-		while (!regions.isEmpty()) {
-			Pair<Integer, ArrayList<Point>> region = regions.poll();
-			for (int z = 0; z < region.getValue().size(); z++) {
-				if (areaBigEnough(region.getKey())) {
-					background[region.getValue().get(z).y][region.getValue()
-							.get(z).x] = true;
+		Pair<Integer, ArrayList<Point>> topRegion = regions.peek();
+		if (topRegion != null) {
+			if (topRegion.getKey() >= (image.getWidth() / (2 * minRegionThreshold))) {
+				while (!regions.isEmpty()) {
+					Pair<Integer, ArrayList<Point>> region = regions.poll();
+					for (int z = 0; z < region.getValue().size(); z++) {
+						if (areaBigEnough(region.getKey())) {
+							background[region.getValue().get(z).y][region
+									.getValue().get(z).x] = true;
+						}
+					}
 				}
+			} else {
+				return null;
 			}
-		}
+		} else
+			return null;
 
 		return background;
 	}
@@ -212,14 +231,15 @@ public class ColorSelection extends AbstractSelectionAlgorithm {
 						colorRegionsList.get(index).addRegion(region);
 				}
 			}
-			if  (isCancelled()) { actionController.setProgress(image.getWidth()); return;}
-			if ((x % 5) == 0) actionController.setProgress(x);
+			if (isCancelled()) {
+				actionController.setProgress(image.getWidth());
+				return;
+			}
+			if ((x % 5) == 0)
+				actionController.setProgress(x);
 		}
 
-
 	}
-
-
 
 	@Override
 	protected boolean[][] doInBackground() {

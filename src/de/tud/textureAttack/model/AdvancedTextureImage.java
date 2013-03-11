@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Sebastian Funke.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Sebastian Funke - initial API and implementation
+ ******************************************************************************/
 package de.tud.textureAttack.model;
 
 import gr.zdimensions.jsquish.Squish.CompressionType;
@@ -16,7 +26,6 @@ import model.TEXFile;
 import model.TextureImage;
 import ddsutil.DDSUtil;
 import ddsutil.MipMapsUtil;
-import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.algorithms.Options;
 import de.tud.textureAttack.model.algorithms.attacks.AbstractAttackAlgorithm;
 import de.tud.textureAttack.model.algorithms.selection.AbstractSelectionAlgorithm;
@@ -174,43 +183,50 @@ public class AdvancedTextureImage {
 	 * @param attack
 	 */
 	public void processManipulation(AbstractAttackAlgorithm attackAlgo,
-			AbstractSelectionAlgorithm selectAlgo, Options options, StatusBar statusBar) {
+			AbstractSelectionAlgorithm selectAlgo, Options options,
+			StatusBar statusBar) {
 
 		// texture already loaded?
 		if (editedBufferedImage == null)
 			loadImage();
 		// get Background Pixels of image with selectAlgo
-		selectAlgo.init(editedBufferedImage, options, IOUtils.getFileNameFromPath(absoluteFilePath));
+		selectAlgo.init(editedBufferedImage, options,
+				IOUtils.getFileNameFromPath(absoluteFilePath));
 		Object backgroundRaster = null;
-		
-		backgroundRaster = statusBar.startTask(IOUtils.getFileNameFromPath(absoluteFilePath)+" background selection", selectAlgo);
+
+		backgroundRaster = statusBar.startTask(
+				IOUtils.getFileNameFromPath(absoluteFilePath)
+						+ " background selection", selectAlgo);
 
 		// if selectalgo wasn't successful, mark image as todo
 		if (backgroundRaster == null) {
 			state = EditState.todo;
 		} else {
 			// attack the image with given attaclAlgo
-			attackAlgo.init(editedBufferedImage, (boolean[][])backgroundRaster, options);
-			Object o = statusBar.startTask(IOUtils.getFileNameFromPath(absoluteFilePath)+" background manipulation", attackAlgo);
-			if (o instanceof BufferedImage){
+			attackAlgo.init(editedBufferedImage,
+					(boolean[][]) backgroundRaster, options);
+			Object o = statusBar.startTask(
+					IOUtils.getFileNameFromPath(absoluteFilePath)
+							+ " background manipulation", attackAlgo);
+			if (o instanceof BufferedImage) {
 				editedBufferedImage = (BufferedImage) o;
 
-			// save the resulting image tmp, before release memory with
-			// resetImage() and set state to finished
-			File absolutPath = new File("");
-			String fileName = IOUtils.getFileNameFromPath(absoluteFilePath)
-					.substring(
-							0,
-							IOUtils.getFileNameFromPath(absoluteFilePath)
-									.length() - 4)
-					+ ".png";
-			saveImageFile(editedBufferedImage, absolutPath.getAbsolutePath()
-					+ TMP_PATH, fileName, "png");
-			state = EditState.finished;
+				// save the resulting image tmp, before release memory with
+				// resetImage() and set state to finished
+				File absolutPath = new File("");
+				String fileName = IOUtils.getFileNameFromPath(absoluteFilePath)
+						.substring(
+								0,
+								IOUtils.getFileNameFromPath(absoluteFilePath)
+										.length() - 4)
+						+ ".png";
+				saveImageFile(editedBufferedImage,
+						absolutPath.getAbsolutePath() + TMP_PATH, fileName,
+						"png");
+				state = EditState.finished;
+			}
 		}
-		}
-		
-		
+
 		resetImage();
 
 	}
@@ -402,7 +418,8 @@ public class AdvancedTextureImage {
 	}
 
 	/**
-	 * Resets all memory consuming image data (Flushs BufferedImages and sets everything null)
+	 * Resets all memory consuming image data (Flushs BufferedImages and sets
+	 * everything null)
 	 */
 	public void resetImage() {
 		if (originalBufferedImage != null) {
@@ -416,6 +433,7 @@ public class AdvancedTextureImage {
 
 	/**
 	 * Returns the path of the temp. saved (manipulated) editedImage
+	 * 
 	 * @return
 	 */
 	public String getTmpSavePath() {

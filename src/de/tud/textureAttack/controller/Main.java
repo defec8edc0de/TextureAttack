@@ -10,17 +10,13 @@
  ******************************************************************************/
 package de.tud.textureAttack.controller;
 
-
 public class Main {
-	
-	private ActionController actionController;
 
+	private ActionController actionController;
 
 	public Main() {
 		actionController = new ActionController();
 	}
-
-
 
 	/**
 	 * Main Method to start the application
@@ -29,7 +25,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Main program = new Main();
-		
+
 		// // ImageJ Test
 		// int width = 400;
 		// int height = 400;
@@ -39,6 +35,5 @@ public class Main {
 		// imp.show();
 
 	}
-
 
 }

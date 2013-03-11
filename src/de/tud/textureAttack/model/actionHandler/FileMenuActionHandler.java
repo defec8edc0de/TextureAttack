@@ -16,10 +16,10 @@ import java.awt.event.ActionListener;
 import de.tud.textureAttack.controller.ActionController;
 
 public class FileMenuActionHandler implements ActionListener {
-	
+
 	private ActionController actionController;
-	
-	public FileMenuActionHandler(ActionController actionController){
+
+	public FileMenuActionHandler(ActionController actionController) {
 		this.actionController = actionController;
 	}
 
@@ -29,10 +29,10 @@ public class FileMenuActionHandler implements ActionListener {
 			System.exit(0);
 		if (menuItem.getActionCommand().equals("Lade Texturen"))
 			actionController.loadTextures();
-		if (menuItem.getActionCommand().equals("Speichere Textur")){
+		if (menuItem.getActionCommand().equals("Speichere Textur")) {
 			actionController.saveTextures();
 		}
-		
+
 	}
 
 }

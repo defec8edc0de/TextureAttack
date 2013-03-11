@@ -1,10 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Sebastian Funke.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Sebastian Funke - initial API and implementation
+ ******************************************************************************/
 package de.tud.textureAttack.model.utils;
 
 import jogl.DDSImage;
 
 /**
  * @author danielsenff
- *
+ * 
  */
 public class ExportOptions {
 
@@ -22,8 +32,9 @@ public class ExportOptions {
 	/**
 	 * 
 	 */
-	public ExportOptions() {}
-	
+	public ExportOptions() {
+	}
+
 	/**
 	 * @param pixelformat
 	 * @param generateMipMaps
@@ -34,17 +45,15 @@ public class ExportOptions {
 		this.newPixelformat = pixelformat;
 		this.generateMipMaps = generateMipMaps;
 	}
-	
+
 	/**
 	 * @param width
 	 * @param height
 	 * @param pixelformat
 	 * @param generateMipMaps
 	 */
-	public ExportOptions(final int width, 
-			final int height, 
-			final int pixelformat, 
-			final boolean generateMipMaps) {
+	public ExportOptions(final int width, final int height,
+			final int pixelformat, final boolean generateMipMaps) {
 		this.setKeepDimension(false);
 		this.newWidth = width;
 		this.newHeight = height;
@@ -52,9 +61,9 @@ public class ExportOptions {
 		this.newPixelformat = pixelformat;
 		this.generateMipMaps = generateMipMaps;
 	}
-	
+
 	/**
-	 * @param preset 
+	 * @param preset
 	 * 
 	 */
 	public ExportOptions(final Preset preset) {
@@ -72,7 +81,7 @@ public class ExportOptions {
 		setKeepPixelformat(false);
 		this.newPixelformat = preset.getPixelformat();
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -83,7 +92,6 @@ public class ExportOptions {
 	public void setGenerateMipMaps(boolean generateMipMaps) {
 		this.generateMipMaps = generateMipMaps;
 	}
-	
 
 	public boolean isPaintWhiteAlpha() {
 		return this.paintWhiteAlpha;
@@ -92,7 +100,6 @@ public class ExportOptions {
 	public void setPaintWhiteAlpha(boolean paintWhiteAlpha) {
 		this.paintWhiteAlpha = paintWhiteAlpha;
 	}
-	
 
 	public boolean isMakeBackup() {
 		return this.makeBackup;
@@ -101,7 +108,6 @@ public class ExportOptions {
 	public void setMakeBackup(boolean makeBackup) {
 		this.makeBackup = makeBackup;
 	}
-
 
 	public void setKeepOriginal(boolean keepOriginal) {
 		this.keepOriginal = keepOriginal;
@@ -114,7 +120,7 @@ public class ExportOptions {
 	public void setNewHeight(final int newHeight) {
 		this.newHeight = newHeight;
 	}
-	
+
 	public int getNewPixelformat() {
 		return this.newPixelformat;
 	}
@@ -122,7 +128,7 @@ public class ExportOptions {
 	public void setNewPixelformat(int newPixelformat) {
 		this.newPixelformat = newPixelformat;
 	}
-	
+
 	public int getNewWidth() {
 		return this.newWidth;
 	}
@@ -146,7 +152,8 @@ public class ExportOptions {
 	}
 
 	/**
-	 * @param keepDimension the keepDimension to set
+	 * @param keepDimension
+	 *            the keepDimension to set
 	 */
 	public void setKeepDimension(boolean keepDimension) {
 		this.keepDimension = keepDimension;
@@ -160,10 +167,11 @@ public class ExportOptions {
 	}
 
 	/**
-	 * @param keepPixelformat the keepPixelformat to set
+	 * @param keepPixelformat
+	 *            the keepPixelformat to set
 	 */
 	public void setKeepPixelformat(boolean keepPixelformat) {
 		this.keepPixelformat = keepPixelformat;
 	}
-	
+
 }

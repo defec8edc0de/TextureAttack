@@ -250,14 +250,15 @@ public class ActionController {
 							(AbstractAttackAlgorithm) attackAlgoFactory
 									.getAlgorithm(attack),
 							(AbstractSelectionAlgorithm) selectionAlgoFactory
-									.getAlgorithm(selection), options, getStatusBar());
+									.getAlgorithm(selection), options,
+							getStatusBar());
 			setTextureIcon(workingImageSet
 					.getAdvancedTextureImageFromAbsoluteFilePath(imagePath));
 			resetAlgorithms();
 
-		}
-		else {
-			JOptionPane.showMessageDialog(null, "No Texture selected on the left preview list");
+		} else {
+			JOptionPane.showMessageDialog(null,
+					"No Texture selected on the left preview list");
 		}
 	}
 
@@ -266,19 +267,19 @@ public class ActionController {
 	}
 
 	/**
-	 *Resets/Creates new the given algorithms in the factory
+	 * Resets/Creates new the given algorithms in the factory
+	 * 
 	 * @param algoList
 	 */
 	public void resetAlgorithms() {
 		attackAlgoFactory = new AttackAlgorithms(this);
-		selectionAlgoFactory = new SelectionAlgorithms(this);		
+		selectionAlgoFactory = new SelectionAlgorithms(this);
 	}
 
 	public AbstractAlgorithm getAlgorithm(Enum name) {
-		if (attackAlgoFactory.contains(name)){
+		if (attackAlgoFactory.contains(name)) {
 			return attackAlgoFactory.getAlgorithm(name);
-		}
-		else if (selectionAlgoFactory.contains(name)){
+		} else if (selectionAlgoFactory.contains(name)) {
 			return selectionAlgoFactory.getAlgorithm(name);
 		}
 		return null;

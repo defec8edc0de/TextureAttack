@@ -10,33 +10,27 @@
  ******************************************************************************/
 package de.tud.textureAttack.model.actionHandler;
 
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
 
 import de.tud.textureAttack.controller.ActionController;
-import de.tud.textureAttack.view.dialogs.ImageViewer;
 
 public class ToolsMenuActionHandler implements ActionListener {
-	
+
 	public static final String FILTER_TODO = "Filter Todos";
-	
+
 	private ActionController actionController;
-	
-	public ToolsMenuActionHandler(ActionController actionController){
+
+	public ToolsMenuActionHandler(ActionController actionController) {
 		this.actionController = actionController;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent menuItem) {
-		if (menuItem.getActionCommand().equals(FILTER_TODO)){
+		if (menuItem.getActionCommand().equals(FILTER_TODO)) {
 			actionController.filterPreviewList(FILTER_TODO);
 		}
-		
+
 	}
 
 }

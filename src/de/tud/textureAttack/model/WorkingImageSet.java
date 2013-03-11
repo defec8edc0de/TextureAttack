@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Sebastian Funke.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Sebastian Funke - initial API and implementation
+ ******************************************************************************/
 package de.tud.textureAttack.model;
 
 import java.awt.image.BufferedImage;
@@ -47,7 +57,9 @@ public class WorkingImageSet {
 	 * AdvancedTextureImages and stores it in the working set
 	 * 
 	 * @param files
-	 * @param baseDir Base Directory of the files, for saving later with dir structure
+	 * @param baseDir
+	 *            Base Directory of the files, for saving later with dir
+	 *            structure
 	 */
 	public void setTextures(File[] files, String baseDir) {
 		if (files != null) {
@@ -174,9 +186,11 @@ public class WorkingImageSet {
 	 * @param options
 	 */
 	public void manipulateAllImages(AbstractAttackAlgorithm attackAlgorithm,
-			AbstractSelectionAlgorithm selectAlgorithm, Options options, StatusBar statusBar) {
+			AbstractSelectionAlgorithm selectAlgorithm, Options options,
+			StatusBar statusBar) {
 		int i = 0;
-		actionController.getStatusBar().setImageProgressParameter(imageList.size());
+		actionController.getStatusBar().setImageProgressParameter(
+				imageList.size());
 		actionController.getStatusBar().setImageProgress(i);
 		for (AdvancedTextureImage advImage : imageList) {
 			advImage.processManipulation(attackAlgorithm, selectAlgorithm,
@@ -184,16 +198,18 @@ public class WorkingImageSet {
 			i++;
 			actionController.getStatusBar().setImageProgress(i);
 			actionController.setTextureIcon(advImage);
-//			if (actionController.getStatusBar().getCanceledAutoAttack())
-//				break;
-			
 			actionController.getStatusBar().resetAlgorithms();
-			attackAlgorithm = (AbstractAttackAlgorithm) actionController.getAlgorithm(attackAlgorithm.getName());
-			selectAlgorithm = (AbstractSelectionAlgorithm) actionController.getAlgorithm(selectAlgorithm.getName());
+			// reset the algorithms, because they are swingworker and need to be
+			// reseted
+			attackAlgorithm = (AbstractAttackAlgorithm) actionController
+					.getAlgorithm(attackAlgorithm.getName());
+			selectAlgorithm = (AbstractSelectionAlgorithm) actionController
+					.getAlgorithm(selectAlgorithm.getName());
+			if (actionController.getStatusBar().getCanceledAutoAttack())
+				break;
 		}
-		
-		actionController.getStatusBar().doneAll();
 
+		actionController.getStatusBar().doneAll();
 
 	}
 

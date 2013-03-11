@@ -44,7 +44,8 @@ public class MainWindow extends JFrame {
 	private void initilizeComponents() {
 		contentContainer = new ContentContainer(actionController);
 		menuBar = new MenuBar(actionController);
-		statusBar = new StatusBar("Program started", actionController, getWidth());
+		statusBar = new StatusBar("Program started", actionController,
+				getWidth());
 		add(menuBar, BorderLayout.NORTH);
 		add(contentContainer, BorderLayout.CENTER);
 		add(statusBar, BorderLayout.SOUTH);
