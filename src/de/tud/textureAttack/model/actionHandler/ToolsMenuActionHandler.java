@@ -17,7 +17,7 @@ import de.tud.textureAttack.controller.ActionController;
 
 public class ToolsMenuActionHandler implements ActionListener {
 
-	public static final String FILTER_TODO = "Filter Todos";
+	public static final String FILTER_FINISHED = "Filter Finsihed Textures";
 
 	private ActionController actionController;
 
@@ -27,8 +27,8 @@ public class ToolsMenuActionHandler implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent menuItem) {
-		if (menuItem.getActionCommand().equals(FILTER_TODO)) {
-			actionController.filterPreviewList(FILTER_TODO);
+		if (menuItem.getActionCommand().equals(FILTER_FINISHED)) {
+			actionController.filterPreviewList(FILTER_FINISHED);
 		}
 
 	}

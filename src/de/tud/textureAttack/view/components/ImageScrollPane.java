@@ -27,6 +27,7 @@ import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.AdvancedTextureImage;
 import de.tud.textureAttack.model.AdvancedTextureImage.EditState;
 import de.tud.textureAttack.model.actionHandler.ToolsMenuActionHandler;
+import de.tud.textureAttack.model.io.IOUtils;
 
 public class ImageScrollPane extends JScrollPane {
 
@@ -62,6 +63,10 @@ public class ImageScrollPane extends JScrollPane {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
+				ImageScrollPane.this.actionController
+				.setStatus(IOUtils.getFileNameFromPath(ImageScrollPane.this.getSelectedImageByPath()));
+				
+				
 				if ((e.getButton() == 1) && (e.getClickCount() == 2)) {
 					ImageScrollPane.this.actionController
 							.setPreviewImage(ImageScrollPane.this.actionController
@@ -88,9 +93,7 @@ public class ImageScrollPane extends JScrollPane {
 	public void setIcons(ArrayList<AdvancedTextureImage> images) {
 		if (images != null) {
 			iconListModel.clear();
-			actionController.setProgressCount(images.size());
 			for (int i = 0; i < images.size(); i++) {
-				actionController.setProgress(i);
 				if (images.get(i).getState() != AdvancedTextureImage.EditState.unsupported) {
 					iconListModel.addElement(new ImageIcon(images.get(i)
 							.getThumbnail(), images.get(i).getAbsolutePath()));
@@ -128,8 +131,8 @@ public class ImageScrollPane extends JScrollPane {
 	}
 
 	public void filterList(String filter) {
-		switch (filter) {
-		case ToolsMenuActionHandler.FILTER_TODO:
+		
+		if (filter.equals(ToolsMenuActionHandler.FILTER_FINISHED)){
 			for (int i = 0; i < iconListModel.getSize(); i++) {
 				AdvancedTextureImage img = actionController
 						.getAdvancedTextureImageFromAbsolutePath(((ImageIcon) iconListModel
@@ -139,10 +142,6 @@ public class ImageScrollPane extends JScrollPane {
 			}
 			iconList.repaint();
 			iconList.revalidate();
-			break;
-
-		default:
-			break;
 		}
 	}
 

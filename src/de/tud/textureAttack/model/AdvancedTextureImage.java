@@ -424,7 +424,8 @@ public class AdvancedTextureImage {
 	public void resetImage() {
 		if (originalBufferedImage != null) {
 			originalBufferedImage.flush();
-			editedBufferedImage.flush();
+			if (editedBufferedImage != null)
+				editedBufferedImage.flush();
 		}
 		originalBufferedImage = null;
 		editedBufferedImage = null;
@@ -438,6 +439,10 @@ public class AdvancedTextureImage {
 	 */
 	public String getTmpSavePath() {
 		return tmpSavePath;
+	}
+
+	public void setTmpSavePath(String path) {
+		tmpSavePath = path;
 	}
 
 }

@@ -80,13 +80,13 @@ public class MenuBar extends JMenuBar {
 		fileMenu.add(fileMenu_saveTexturesItem);
 		fileMenu.add(fileMenu_saveAllTexturesItem);
 		fileMenu.addSeparator();
-		fileMenu.add(fileMenu_preferencesItem);
+		//fileMenu.add(fileMenu_preferencesItem);
 		fileMenu.addSeparator();
 		fileMenu.add(fileMenu_exitItem);
 
 		toolsMenu = new JMenu("Tools");
 		toolsMenu_actionHandler = new ToolsMenuActionHandler(actionController);
-		toolsMenu_filterTodo = new JMenuItem("Filter unfinished Textures");
+		toolsMenu_filterTodo = new JMenuItem(ToolsMenuActionHandler.FILTER_FINISHED);
 		toolsMenu_filterTodo.addActionListener(toolsMenu_actionHandler);
 
 		toolsMenu.add(toolsMenu_filterTodo);
@@ -97,15 +97,11 @@ public class MenuBar extends JMenuBar {
 
 	public void fireAction(String menuItem, Object source, int id,
 			String command) {
-		switch (menuItem) {
-		case ToolsMenuActionHandler.FILTER_TODO:
+		if (menuItem.equals(ToolsMenuActionHandler.FILTER_FINISHED)) {
 			toolsMenu_actionHandler.actionPerformed(new ActionEvent(source, id,
 					command));
-			break;
-
-		default:
-			break;
 		}
+
 	}
 
 }

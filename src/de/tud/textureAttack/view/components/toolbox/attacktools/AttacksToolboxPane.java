@@ -52,15 +52,11 @@ public class AttacksToolboxPane extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				switch (String.valueOf(attackToolComboBox.getSelectedItem())) {
-				case "random":
+				if (String.valueOf(attackToolComboBox.getSelectedItem()).equals("random")) {
 					AttacksToolboxPane.this.actionController.setOption(
 							Options.OptionIdentifierEnum.Attack_Algorithm,
 							Options.AttackToolEnum.Random);
 					removeAndAdd(randomAttackOptionsPane);
-					break;
-				default:
-					break;
 				}
 
 			}

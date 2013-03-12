@@ -159,14 +159,10 @@ public class ActionController {
 	 * @param action
 	 */
 	public void fireAction(String action) {
-		switch (action) {
-		case ToolsMenuActionHandler.FILTER_TODO:
-			mainWindow.getMenu().fireAction(ToolsMenuActionHandler.FILTER_TODO,
-					this, this.hashCode(), ToolsMenuActionHandler.FILTER_TODO);
-			break;
 
-		default:
-			break;
+		if(action.equals(ToolsMenuActionHandler.FILTER_FINISHED)){
+			mainWindow.getMenu().fireAction(ToolsMenuActionHandler.FILTER_FINISHED,
+					this, this.hashCode(), ToolsMenuActionHandler.FILTER_FINISHED);
 		}
 	}
 
@@ -283,6 +279,15 @@ public class ActionController {
 			return selectionAlgoFactory.getAlgorithm(name);
 		}
 		return null;
+	}
+
+	public void saveTexture() {
+		TexturesDialog textureSaveDialog = new TexturesDialog(
+				TexturesDialog.SAVE_DIALOG);
+		if (textureSaveDialog.showDialog(null, "Speichern") == JFileChooser.APPROVE_OPTION) {
+			workingImageSet.saveTexture(textureSaveDialog.getSelectedFile()
+					.getAbsolutePath(), mainWindow.getContentContainer().getImageScrollPane().getSelectedImageByPath());
+		}		
 	}
 
 }

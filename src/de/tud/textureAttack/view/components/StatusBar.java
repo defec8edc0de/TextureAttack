@@ -62,6 +62,7 @@ public class StatusBar extends JPanel {
 		modalDialog = new JDialog();
 		modalDialog.setTitle("Working..");
 		modalDialog.setModal(true);
+		modalDialog.setResizable(false);
 		modalDialog.add(imageProgress);
 		modalDialog.setLocationRelativeTo(this);
 		modalDialog.addWindowListener(new WindowListener() {

@@ -22,7 +22,7 @@ public class FileMenuActionHandler implements ActionListener {
 	public FileMenuActionHandler(ActionController actionController) {
 		this.actionController = actionController;
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent menuItem) {
 		if (menuItem.getActionCommand().equals("Beenden"))
@@ -30,9 +30,11 @@ public class FileMenuActionHandler implements ActionListener {
 		if (menuItem.getActionCommand().equals("Lade Texturen"))
 			actionController.loadTextures();
 		if (menuItem.getActionCommand().equals("Speichere Textur")) {
+			actionController.saveTexture();
+		}
+		if (menuItem.getActionCommand().equals("Speichere alle Texturen")) {
 			actionController.saveTextures();
 		}
-
 	}
 
 }

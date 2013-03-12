@@ -64,8 +64,10 @@ public class WorkingImageSet {
 	public void setTextures(File[] files, String baseDir) {
 		if (files != null) {
 			imageList.clear();
+			actionController.setProgressCount(files.length);
 			for (int i = 0; i < files.length; i++) {
 				try {
+					actionController.setProgress(i);
 					AdvancedTextureImage img = new AdvancedTextureImage(
 							files[i].getAbsolutePath(), baseDir);
 					imageList.add(img);
@@ -151,12 +153,19 @@ public class WorkingImageSet {
 	 * @param absolutePath
 	 */
 	public void saveTextures(String absolutePath) {
+		actionController.setProgressCount(imageList.size());
+		int i = 0;
 		for (AdvancedTextureImage img : imageList) {
+			actionController.setProgress(i);
+			i++;
 			img.writeTextureToPath(absolutePath);
-			// tmpSavePath: delete tmp image
-			File file = new File(img.getTmpSavePath());
-			if (file.exists())
-				file.delete();
+			if (img.getTmpSavePath() != null) {
+				// tmpSavePath: delete tmp image
+				File file = new File(img.getTmpSavePath());
+				if (file.exists())
+					file.delete();
+				img.setTmpSavePath(null);
+			}
 		}
 	}
 
@@ -211,6 +220,18 @@ public class WorkingImageSet {
 
 		actionController.getStatusBar().doneAll();
 
+	}
+
+	public void saveTexture(String absolutePath, String selectedImageByPath) {
+		AdvancedTextureImage img = getAdvancedTextureImageFromAbsoluteFilePath(selectedImageByPath);
+		img.writeTextureToPath(absolutePath);
+		if (img.getTmpSavePath() != null) {
+			// tmpSavePath: delete tmp image
+			File file = new File(img.getTmpSavePath());
+			if (file.exists())
+				file.delete();
+			img.setTmpSavePath(null);
+		}
 	}
 
 }
