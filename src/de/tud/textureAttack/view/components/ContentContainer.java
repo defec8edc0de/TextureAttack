@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -108,20 +110,21 @@ public class ContentContainer extends JSplitPane {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (imagePreviewScrollPane.isImagePreviewed()) {
+					BufferedImage resizedImage = ImageProcessingToolKit
+							.resizeImage(imagePreviewScrollPane
+									.getImage()
+									.getEditedBufferedImage(),
+									imagePreviewScrollPane.getImage()
+											.getEditedBufferedImage()
+											.getType(),
+									imagePreviewScrollPane.getImage()
+											.getEditedBufferedImage()
+											.getWidth() * 2,
+									imagePreviewScrollPane.getImage()
+											.getEditedBufferedImage()
+											.getHeight() * 2);
 					imagePreviewScrollPane
-							.setPreviewImage(ImageProcessingToolKit
-									.resizeImage(imagePreviewScrollPane
-											.getImage()
-											.getEditedBufferedImage(),
-											imagePreviewScrollPane.getImage()
-													.getEditedBufferedImage()
-													.getType(),
-											imagePreviewScrollPane.getImage()
-													.getEditedBufferedImage()
-													.getWidth() * 2,
-											imagePreviewScrollPane.getImage()
-													.getEditedBufferedImage()
-													.getHeight() * 2));
+							.setPreviewImage(resizedImage, resizedImage.getWidth(), resizedImage.getHeight());
 				}
 			}
 		};
@@ -131,20 +134,21 @@ public class ContentContainer extends JSplitPane {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (imagePreviewScrollPane.isImagePreviewed()) {
+					BufferedImage resizedImage = ImageProcessingToolKit
+							.resizeImage(imagePreviewScrollPane
+									.getImage()
+									.getEditedBufferedImage(),
+									imagePreviewScrollPane.getImage()
+											.getEditedBufferedImage()
+											.getType(),
+									imagePreviewScrollPane.getImage()
+											.getEditedBufferedImage()
+											.getWidth() / 2,
+									imagePreviewScrollPane.getImage()
+											.getEditedBufferedImage()
+											.getHeight() / 2);
 					imagePreviewScrollPane
-							.setPreviewImage(ImageProcessingToolKit
-									.resizeImage(imagePreviewScrollPane
-											.getImage()
-											.getEditedBufferedImage(),
-											imagePreviewScrollPane.getImage()
-													.getEditedBufferedImage()
-													.getType(),
-											imagePreviewScrollPane.getImage()
-													.getEditedBufferedImage()
-													.getWidth() / 2,
-											imagePreviewScrollPane.getImage()
-													.getEditedBufferedImage()
-													.getHeight() / 2));
+							.setPreviewImage(resizedImage, resizedImage.getWidth(), resizedImage.getHeight());
 				}
 			}
 		};

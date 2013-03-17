@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -21,14 +23,21 @@ import javax.swing.JPanel;
 public class PreviewImagePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private static final int PREF_W = (3 * 1280) / 4;
-	private static final int PREF_H = (3 * 960) / 4;
+	private int PREF_W = 256;
+	private int PREF_H = 256;
 	private BufferedImage img = null;
 
-	public void setImage(BufferedImage img) {
+
+	
+	
+	public void setImage(BufferedImage img, int width, int height) {
 		this.img = img;
+		PREF_W = width < 256 ? 256 : width;
+		PREF_H =  height < 256 ? 256 : height;
 		repaint();
 	}
+	
+	
 
 	public BufferedImage getImage() {
 		return img;
@@ -46,8 +55,8 @@ public class PreviewImagePanel extends JPanel {
 			return;
 		}
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.drawImage(img, 0, 0, PREF_W, PREF_H, null);
 
 	}

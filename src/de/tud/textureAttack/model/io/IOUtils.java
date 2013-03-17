@@ -11,6 +11,9 @@
 package de.tud.textureAttack.model.io;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -106,6 +109,22 @@ public class IOUtils {
 			baseDir = selectedFiles[0].getParent();
 		}
 		return baseDir == null ? "" : baseDir;
+	}
+
+	public static void writePathsToTextFile(
+			ArrayList<String> unsupportedTexturePaths, String filePath) {
+        try{ 
+            PrintWriter pWriter = new PrintWriter(new FileWriter(filePath)); 
+            for (String imgPath : unsupportedTexturePaths)
+            	pWriter.println(imgPath); 
+            
+            pWriter.flush(); 
+            pWriter.close();
+        }catch(IOException ioe){ 
+            ioe.printStackTrace(); 
+        } 
+     
+		
 	}
 
 }

@@ -10,11 +10,14 @@
  ******************************************************************************/
 package de.tud.textureAttack.view.components;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JScrollPane;
 
 import de.tud.textureAttack.model.AdvancedTextureImage;
+import de.tud.textureAttack.model.AdvancedTextureImage.EditState;
 
 public class ImagePreviewScrollPane extends JScrollPane {
 
@@ -26,6 +29,7 @@ public class ImagePreviewScrollPane extends JScrollPane {
 	public ImagePreviewScrollPane() {
 		super();
 		previewImagePanel = new PreviewImagePanel();
+		
 		image = null;
 		add(previewImagePanel);
 		setViewportView(previewImagePanel);
@@ -36,8 +40,8 @@ public class ImagePreviewScrollPane extends JScrollPane {
 		return (image != null);
 	}
 
-	public void setPreviewImage(BufferedImage img) {
-		previewImagePanel.setImage(img);
+	public void setPreviewImage(BufferedImage img, int width, int height) {
+		previewImagePanel.setImage(img, width, height);
 		setViewportView(previewImagePanel);
 	}
 
@@ -45,22 +49,34 @@ public class ImagePreviewScrollPane extends JScrollPane {
 		if (image != null) {
 			image.resetImage();
 			image = img;
+			if (image.getState() != EditState.unsupported){
 			if (image.getEditedBufferedImage() == null) {
 				image.loadImage();
-				previewImagePanel.setImage(image.getEditedBufferedImage());
-				setViewportView(previewImagePanel);
+				if (image.getEditedBufferedImage() != null){
+					previewImagePanel.setImage(image.getEditedBufferedImage(), image.getEditedBufferedImage().getWidth(), image.getEditedBufferedImage().getHeight());
+					setViewportView(previewImagePanel);
+				}
+			}
 			}
 		}
 		image = img;
+		if (image.getState() != EditState.unsupported){
 		if (image.getEditedBufferedImage() == null) {
 			image.loadImage();
-			previewImagePanel.setImage(image.getEditedBufferedImage());
-			setViewportView(previewImagePanel);
+			if (image.getEditedBufferedImage() != null){
+				previewImagePanel.setImage(image.getEditedBufferedImage(), image.getEditedBufferedImage().getWidth(), image.getEditedBufferedImage().getHeight());
+				setViewportView(previewImagePanel);
+			}
+		}
 		}
 	}
 
 	public AdvancedTextureImage getImage() {
 		return image;
+	}
+
+	public BufferedImage getPreviewImage() {
+		return previewImagePanel.getImage();
 	}
 
 }

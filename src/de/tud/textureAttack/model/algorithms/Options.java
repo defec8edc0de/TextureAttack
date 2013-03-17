@@ -19,15 +19,16 @@ import de.tud.textureAttack.model.utils.PropertyUtils;
 public class Options {
 
 	public static enum SelectionToolEnum {
-		ColorSelection, GrabCut
+		ColorSelection, GrabCut, OptimizedColorSelection
 	}
 
 	public static enum AttackToolEnum {
-		Random;
+		Random
 	}
 
 	public static enum OptionIdentifierEnum {
-		Selection_Algorithm, ColorSelection_forColor, ColorSelection_backColor, ColorSelection_ColorThreshold, ColorSelection_MinRegionThreshold, GrabCut_forColor, GrabCut_backColor, Attack_Algorithm, RandomAttack_Randomness
+		Selection_Algorithm, ColorSelection_forColor, ColorSelection_backColor, ColorSelection_ColorThreshold, ColorSelection_MinRegionThreshold, GrabCut_forColor, GrabCut_backColor, Attack_Algorithm, RandomAttack_Randomness,
+		OptimizedColorSelection_ColorThreshold, OptimizedColorSelection_MinRegionThreshold
 	}
 
 	private HashMap<OptionIdentifierEnum, Object> options;
@@ -46,6 +47,21 @@ public class Options {
 						.getProperty("colorSelection_minRegionThreshold"));
 		options.put(OptionIdentifierEnum.ColorSelection_MinRegionThreshold,
 				colorSelection_minRegionThreshold);
+		
+		
+		
+		int OptimizedColorSelection_colorThreshold = Integer
+				.valueOf(PropertyUtils.properties
+						.getProperty("OptimizedColorSelection_colorThreshold"));
+		options.put(OptionIdentifierEnum.OptimizedColorSelection_ColorThreshold,
+				OptimizedColorSelection_colorThreshold);
+		int OptimizedColorSelection_minRegionThreshold = Integer
+				.valueOf(PropertyUtils.properties
+						.getProperty("OptimizedColorSelection_minRegionThreshold"));
+		options.put(OptionIdentifierEnum.OptimizedColorSelection_MinRegionThreshold,
+				OptimizedColorSelection_minRegionThreshold);
+		
+		
 
 		options.put(OptionIdentifierEnum.GrabCut_forColor, Color.black);
 		options.put(OptionIdentifierEnum.GrabCut_backColor, Color.white);

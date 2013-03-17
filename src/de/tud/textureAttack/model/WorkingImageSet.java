@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.tud.textureAttack.controller.ActionController;
+import de.tud.textureAttack.model.AdvancedTextureImage.EditState;
 import de.tud.textureAttack.model.algorithms.Options;
 import de.tud.textureAttack.model.algorithms.attacks.AbstractAttackAlgorithm;
 import de.tud.textureAttack.model.algorithms.selection.AbstractSelectionAlgorithm;
@@ -65,6 +66,7 @@ public class WorkingImageSet {
 		if (files != null) {
 			imageList.clear();
 			actionController.setProgressCount(files.length);
+			actionController.setStatus("Loading Textures.......");
 			for (int i = 0; i < files.length; i++) {
 				try {
 					actionController.setProgress(i);
@@ -156,6 +158,7 @@ public class WorkingImageSet {
 		actionController.setProgressCount(imageList.size());
 		int i = 0;
 		for (AdvancedTextureImage img : imageList) {
+			if (img.getState() != EditState.unsupported){
 			actionController.setProgress(i);
 			i++;
 			img.writeTextureToPath(absolutePath);
@@ -166,6 +169,7 @@ public class WorkingImageSet {
 					file.delete();
 				img.setTmpSavePath(null);
 			}
+		}
 		}
 	}
 
@@ -200,12 +204,12 @@ public class WorkingImageSet {
 		int i = 0;
 		actionController.getStatusBar().setImageProgressParameter(
 				imageList.size());
-		actionController.getStatusBar().setImageProgress(i);
 		for (AdvancedTextureImage advImage : imageList) {
+			if (advImage.getState() != EditState.unsupported){
 			advImage.processManipulation(attackAlgorithm, selectAlgorithm,
 					options, statusBar);
-			i++;
 			actionController.getStatusBar().setImageProgress(i);
+			i++;
 			actionController.setTextureIcon(advImage);
 			actionController.getStatusBar().resetAlgorithms();
 			// reset the algorithms, because they are swingworker and need to be
@@ -216,6 +220,7 @@ public class WorkingImageSet {
 					.getAlgorithm(selectAlgorithm.getName());
 			if (actionController.getStatusBar().getCanceledAutoAttack())
 				break;
+			}
 		}
 
 		actionController.getStatusBar().doneAll();
@@ -224,6 +229,7 @@ public class WorkingImageSet {
 
 	public void saveTexture(String absolutePath, String selectedImageByPath) {
 		AdvancedTextureImage img = getAdvancedTextureImageFromAbsoluteFilePath(selectedImageByPath);
+		if (img.getState() != EditState.unsupported){
 		img.writeTextureToPath(absolutePath);
 		if (img.getTmpSavePath() != null) {
 			// tmpSavePath: delete tmp image
@@ -232,6 +238,20 @@ public class WorkingImageSet {
 				file.delete();
 			img.setTmpSavePath(null);
 		}
+		}
+	}
+
+	public ArrayList<String> getUnsupportedTexturePaths() {
+		ArrayList<String> result = new ArrayList<String>();
+		for (AdvancedTextureImage img : imageList){
+			if (img.getState() == EditState.unsupported)
+				result.add(img.getAbsolutePath());
+		}
+		return result;
+	}
+
+	public int getTextureCount() {
+		return imageList.size();
 	}
 
 }

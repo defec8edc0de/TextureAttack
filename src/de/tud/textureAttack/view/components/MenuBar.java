@@ -35,7 +35,11 @@ public class MenuBar extends JMenuBar {
 
 	private JMenu toolsMenu;
 	private ToolsMenuActionHandler toolsMenu_actionHandler;
-	private JMenuItem toolsMenu_filterTodo;
+	private JMenuItem toolsMenu_filterFinished;
+	private JMenuItem toolMenu_filtersupported;
+	private JMenuItem toolMenu_createUsupportedList;
+	private JMenuItem toolMenu_resetFilter;
+
 
 	private ActionController actionController;
 
@@ -86,10 +90,24 @@ public class MenuBar extends JMenuBar {
 
 		toolsMenu = new JMenu("Tools");
 		toolsMenu_actionHandler = new ToolsMenuActionHandler(actionController);
-		toolsMenu_filterTodo = new JMenuItem(ToolsMenuActionHandler.FILTER_FINISHED);
-		toolsMenu_filterTodo.addActionListener(toolsMenu_actionHandler);
-
-		toolsMenu.add(toolsMenu_filterTodo);
+		
+		toolsMenu_filterFinished = new JMenuItem(ToolsMenuActionHandler.FILTER_FINISHED);
+		toolsMenu_filterFinished.addActionListener(toolsMenu_actionHandler);
+		
+		toolMenu_filtersupported = new JMenuItem(ToolsMenuActionHandler.FILTER_SUPPORTED);
+		toolMenu_filtersupported.addActionListener(toolsMenu_actionHandler);
+		
+		toolMenu_createUsupportedList = new JMenuItem(ToolsMenuActionHandler.CREATE_LIST_UNSUPPORTED_TEXTURES);
+		toolMenu_createUsupportedList.addActionListener(toolsMenu_actionHandler);
+		
+		toolMenu_resetFilter = new JMenuItem(ToolsMenuActionHandler.RESET_FILTER);
+		toolMenu_resetFilter.addActionListener(toolsMenu_actionHandler);		
+		
+		toolsMenu.add(toolsMenu_filterFinished);
+		toolsMenu.add(toolMenu_filtersupported);
+		toolsMenu.add(toolMenu_createUsupportedList);
+		toolsMenu.addSeparator();
+		toolsMenu.add(toolMenu_resetFilter);
 
 		add(fileMenu);
 		add(toolsMenu);
@@ -101,6 +119,14 @@ public class MenuBar extends JMenuBar {
 			toolsMenu_actionHandler.actionPerformed(new ActionEvent(source, id,
 					command));
 		}
+		if (menuItem.equals(ToolsMenuActionHandler.FILTER_SUPPORTED)) {
+			toolsMenu_actionHandler.actionPerformed(new ActionEvent(source, id,
+					command));
+		}
+		if (menuItem.equals(ToolsMenuActionHandler.CREATE_LIST_UNSUPPORTED_TEXTURES)) {
+			toolsMenu_actionHandler.actionPerformed(new ActionEvent(source, id,
+					command));
+		}		
 
 	}
 

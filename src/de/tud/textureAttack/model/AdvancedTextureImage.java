@@ -49,6 +49,8 @@ public class AdvancedTextureImage {
 			+ System.getProperty("file.separator") + "resources"
 			+ System.getProperty("file.separator") + "tmp"
 			+ System.getProperty("file.separator");
+	
+	private final String UNSUPPORTED_IMAGE_PATH = "de/tud/textureAttack/resources/images/unsupported.png";
 
 	private int textureType = -1;
 	private String absoluteFilePath = null;
@@ -79,9 +81,10 @@ public class AdvancedTextureImage {
 					System.out
 							.println("ERROR:			Textur "
 									+ absoluteFilePath
-									+ ": Cubemaps oder Volume-Texturen werden nicht unterstützt...");
+									+ ": Cubemaps or Volume-Textures are not supported...");
+					JOptionPane.showMessageDialog(null, absoluteFilePath+" is CubeMap or Volumn Texture, which are not supported.");
 					throw new InvalidTextureException(
-							"Textur wird nicht unterstützt");
+							"Texture is not supported");
 				} else {
 					this.absoluteFilePath = absoluteFilePath;
 					state = EditState.loaded;
@@ -95,7 +98,7 @@ public class AdvancedTextureImage {
 			}
 		} else
 			throw new InvalidTextureException(
-					"Textur konnte nicht eingelesen werden!");
+					"Couldn't read texture!");
 
 	}
 
@@ -130,6 +133,7 @@ public class AdvancedTextureImage {
 							compressionType).getImage());
 
 					originalBufferedImage = ddsimagefile.getData();
+					if (originalBufferedImage != null){
 					if (tmpSavePath == null)
 						editedBufferedImage = ImageProcessingToolKit
 								.deepCopy(originalBufferedImage);
@@ -137,17 +141,33 @@ public class AdvancedTextureImage {
 						editedBufferedImage = ImageProcessingToolKit
 								.readImage(tmpSavePath);
 
-					texture = ddsimagefile;
+					texture = ddsimagefile;	
+					}
+					else {
+						state = EditState.unsupported;
+						return;
+					}
 
-				} catch (IOException e) {
+				} catch (Exception e) {
+					state = EditState.unsupported;
 					e.printStackTrace();
+					return;
 				}
+			}
+			
+			else {
+				state = EditState.unsupported;
+				return;
 			}
 
 		} catch (Exception e) {
+			state = EditState.unsupported;
 			e.printStackTrace();
+			return;
 		}
 	}
+	
+	
 
 	public EditState getState() {
 		return state;
@@ -185,7 +205,6 @@ public class AdvancedTextureImage {
 	public void processManipulation(AbstractAttackAlgorithm attackAlgo,
 			AbstractSelectionAlgorithm selectAlgo, Options options,
 			StatusBar statusBar) {
-
 		// texture already loaded?
 		if (editedBufferedImage == null)
 			loadImage();
@@ -221,7 +240,7 @@ public class AdvancedTextureImage {
 										.length() - 4)
 						+ ".png";
 				saveImageFile(editedBufferedImage,
-						absolutPath.getAbsolutePath() + TMP_PATH, fileName,
+						absolutPath.getAbsolutePath() + TMP_PATH, String.valueOf(hashCode())+fileName,
 						"png");
 				state = EditState.finished;
 			}
@@ -262,7 +281,6 @@ public class AdvancedTextureImage {
 	public BufferedImage getThumbnail() {
 		BufferedImage icon = null;
 		loadImage();
-		if (editedBufferedImage != null) {
 			switch (state) {
 			case todo:
 				icon = ImageProcessingToolKit.addIconToImage(
@@ -276,13 +294,23 @@ public class AdvancedTextureImage {
 								.createScaledImage(editedBufferedImage),
 						"de/tud/textureAttack/resources/images/finished.png");
 				break;
-			default:
+			case unsupported:
+				BufferedImage unsupportedImage = ImageProcessingToolKit
+						.readImageFromRelativePath(UNSUPPORTED_IMAGE_PATH);
+				icon = ImageProcessingToolKit.addIconToImage(
+						ImageProcessingToolKit
+						.createScaledImage(unsupportedImage),
+				"de/tud/textureAttack/resources/images/nomipmap.png");
+				break;
+			case loaded:
 				icon = ImageProcessingToolKit
 						.createScaledImage(editedBufferedImage);
+				break;				
+			default:
 				break;
 			}
 
-		}
+		
 		resetImage();
 		return icon;
 	}
@@ -299,13 +327,13 @@ public class AdvancedTextureImage {
 		long mem0;
 		try {
 			// actionController.setStatus("LOAD:			Lade Textur "+textureFile.getAbsolutePath());
-			System.out.println("LOAD:			Lade Textur " + file.getAbsolutePath());
+			System.out.println("LOAD:			Load Texture " + file.getAbsolutePath());
 			if (texture != null)
 				texture.loadImageData();
 			else {
 				// actionController.setStatus("ERROR:			Textur "+file.getAbsolutePath()+" konnte nicht eingelesen werden...");
-				System.out.println("ERROR:			Textur " + file.getAbsolutePath()
-						+ " konnte nicht eingelesen werden...");
+				System.out.println("ERROR:			Texture " + file.getAbsolutePath()
+						+ " couldn't be read...");
 				return;
 			}
 
@@ -321,9 +349,9 @@ public class AdvancedTextureImage {
 			mem0 = Runtime.getRuntime().totalMemory()
 					- Runtime.getRuntime().freeMemory();
 			throw new OutOfMemoryError(
-					"Kein Speicher (mem0="
+					"No memory (mem0="
 							+ mem0
-							+ ") mehr frei, versuchen Sie das Programm mit mehr Speicher zu starten z.B. java -Xms4096k -jar textureAttack.jar\n"
+							+ ") left, try to start the program with more memory e.g. java -Xms4096k -jar textureAttack.jar\n"
 							+ ex.getMessage());
 		}
 
@@ -351,7 +379,7 @@ public class AdvancedTextureImage {
 								.isPowerOfTwo(imageToConvert.getHeight())
 						&& texture.hasMipMaps()) {
 					System.out
-							.println("ERROR:			Bildgröße ist keine zweierPotenz");
+							.println("ERROR:			ImageSize is not power of two");
 					// actionController
 					// .setStatus("ERROR:			Bildgröße ist keiner Zweierpotenz! Speichern fehlgeschlagen...");
 					return;
@@ -371,22 +399,27 @@ public class AdvancedTextureImage {
 					if (JOptionPane
 							.showConfirmDialog(
 									null,
-									"Die Datei "
+									"The file "
 											+ newFile.getAbsolutePath()
-											+ " existiert bereits, wollen Sie sie überschreiben?") == JOptionPane.OK_OPTION) {
-						System.out.println("OVERRIDE:			Überschreibe " + path
+											+ " exists already, do you want to override it?") == JOptionPane.OK_OPTION) {
+						System.out.println("OVERRIDE:			Override " + path
 								+ "\\" + oldFilePath + "...");
 						// actionController.setStatus("OVERRIDE:			Überschreibe "
 						// + path + "\\" + fileName + "...");
+						boolean generateMipMaps = false;
+						if (texture.hasMipMaps()){
+							generateMipMaps = true;
+						}
+						
 						DDSUtil.write(newFile, imageToConvert,
-								texture.getPixelformat(), texture.hasMipMaps());
+								texture.getPixelformat(), generateMipMaps);
 						return;
 					} else
 						return;
 				}
 
-				System.out.println("SAVE:			Speichere " + oldFilePath
-						+ " nach " + path + "...");
+				System.out.println("SAVE:			Save " + oldFilePath
+						+ " to " + path + "...");
 				// actionController.setStatus("SAVE:			Speichere " +
 				// fileName
 				// + " nach " + path + "...");
@@ -396,17 +429,21 @@ public class AdvancedTextureImage {
 			}
 
 		} catch (final IOException e) {
+			e.printStackTrace(); 
+		}
+		catch (final Exception e) {
 			e.printStackTrace();
-		} catch (final OutOfMemoryError e) {
+		}
+		catch (final OutOfMemoryError e) {
 			e.printStackTrace();
 			final long mem0 = Runtime.getRuntime().totalMemory()
 					- Runtime.getRuntime().freeMemory();
 			// actionController
 			// .setStatus("ERROR:			Kein Speicher ("+mem0+") mehr frei, versuchen Sie das Programm mit mehr Speicher zu starten z.B. java -Xms4096k -jar textureAttack.jar");
 			System.out
-					.println("ERROR:			Kein Speicher ("
+					.println("ERROR:			No memory ("
 							+ mem0
-							+ ") mehr frei, versuchen Sie das Programm mit mehr Speicher zu starten z.B. java -Xms4096k -jar textureAttack.jar");
+							+ ") left, try to start the program with more memory e.g. java -Xms4096k -jar textureAttack.jar\n");
 		}
 
 		resetImage();

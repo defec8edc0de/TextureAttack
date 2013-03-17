@@ -11,6 +11,8 @@ O * Copyright (c) 2012 Sebastian Funke.
 package de.tud.textureAttack.view;
 
 import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -46,6 +48,7 @@ public class MainWindow extends JFrame {
 		menuBar = new MenuBar(actionController);
 		statusBar = new StatusBar("Program started", actionController,
 				getWidth());
+		
 		add(menuBar, BorderLayout.NORTH);
 		add(contentContainer, BorderLayout.CENTER);
 		add(statusBar, BorderLayout.SOUTH);

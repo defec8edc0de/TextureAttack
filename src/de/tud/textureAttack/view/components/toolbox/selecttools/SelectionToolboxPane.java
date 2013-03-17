@@ -32,6 +32,8 @@ public class SelectionToolboxPane extends JPanel {
 	private ToolBoxOptionPane selectionToolOptionsPane;
 	private GrabCutOptionsPane grabCutOptionsPane;
 	private ColorSelectionOptionPane colorSelectionOptionPane;
+	private OptimizedColorSelectionOptionPane optimizedColorSelectionOptionPane;
+
 	private ActionController actionController;
 
 	public SelectionToolboxPane(ActionController actionController) {
@@ -44,9 +46,12 @@ public class SelectionToolboxPane extends JPanel {
 		grabCutOptionsPane = new GrabCutOptionsPane(actionController);
 		colorSelectionOptionPane = new ColorSelectionOptionPane(
 				actionController);
+		optimizedColorSelectionOptionPane = new OptimizedColorSelectionOptionPane(actionController);
 
 		selectionToolComboBox = new JComboBox<SelectionToolEnum>();
 		selectionToolComboBox.addItem(SelectionToolEnum.ColorSelection);
+		// too buggy for release version
+		//selectionToolComboBox.addItem(SelectionToolEnum.OptimizedColorSelection);		
 		selectionToolComboBox.addItem(SelectionToolEnum.GrabCut);
 
 		selectionToolComboBox.setMinimumSize(new Dimension(80, 20));
@@ -71,6 +76,12 @@ public class SelectionToolboxPane extends JPanel {
 							Options.SelectionToolEnum.ColorSelection);
 					removeAndAdd(colorSelectionOptionPane);
 					break;
+				case OptimizedColorSelection:
+					SelectionToolboxPane.this.actionController.setOption(
+							Options.OptionIdentifierEnum.Selection_Algorithm,
+							Options.SelectionToolEnum.OptimizedColorSelection);
+					removeAndAdd(optimizedColorSelectionOptionPane);
+					break;					
 				default:
 					break;
 				}

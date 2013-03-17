@@ -21,6 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import de.tud.textureAttack.model.AdvancedTextureImage;
+import de.tud.textureAttack.model.AdvancedTextureImage.EditState;
 import de.tud.textureAttack.model.WorkingImageSet;
 import de.tud.textureAttack.model.actionHandler.ToolsMenuActionHandler;
 import de.tud.textureAttack.model.algorithms.AbstractAlgorithm;
@@ -82,7 +83,7 @@ public class ActionController {
 	public void saveTextures() {
 		TexturesDialog textureSaveDialog = new TexturesDialog(
 				TexturesDialog.SAVE_DIALOG);
-		if (textureSaveDialog.showDialog(null, "Speichern") == JFileChooser.APPROVE_OPTION) {
+		if (textureSaveDialog.showDialog(null, "Save") == JFileChooser.APPROVE_OPTION) {
 			workingImageSet.saveTextures(textureSaveDialog.getSelectedFile()
 					.getAbsolutePath());
 		}
@@ -91,7 +92,7 @@ public class ActionController {
 	public void loadTextures() {
 		TexturesDialog textureChooser = new TexturesDialog(
 				TexturesDialog.OPEN_DIALOG);
-		if (textureChooser.showDialog(null, "Öffnen") == JFileChooser.APPROVE_OPTION) {
+		if (textureChooser.showDialog(null, "Open") == JFileChooser.APPROVE_OPTION) {
 			PropertyUtils.properties.setProperty("lastDir", textureChooser
 					.getCurrentDirectory().getAbsolutePath());
 			try {
@@ -105,15 +106,49 @@ public class ActionController {
 
 			File[] loadedFiles = IOUtils.getAllTextureFiles(textureChooser
 					.getSelectedFiles());
-			String baseDir = IOUtils.getBaseDir(textureChooser
-					.getSelectedFiles());
+			if (loadedFiles.length > 3000) {
+				JOptionPane.showMessageDialog(null,
+						"To much textures to load, not enough memory! (Not more than 3000 textures at once...)");
+			} else {
+				String baseDir = IOUtils.getBaseDir(textureChooser
+						.getSelectedFiles());
 
-			workingImageSet.setTextures(loadedFiles, baseDir);
-			mainWindow.loadTextureImages(workingImageSet
-					.getAdvancedTextureImages());
+				workingImageSet.setTextures(loadedFiles, baseDir);
+				mainWindow.loadTextureImages(workingImageSet
+						.getAdvancedTextureImages());
+
+			}
 
 		}
 
+	}
+
+	public void loadTexturesInPreviewList(String filter, boolean complement) {
+
+		ArrayList<AdvancedTextureImage> filteredImageList = new ArrayList<AdvancedTextureImage>();
+		ArrayList<AdvancedTextureImage> originalImageList = workingImageSet
+				.getAdvancedTextureImages();
+
+		EditState filterState = null;
+		if (filter.equals(ToolsMenuActionHandler.FILTER_FINISHED))
+			filterState = EditState.finished;
+		if (filter.equals(ToolsMenuActionHandler.FILTER_SUPPORTED))
+			filterState = EditState.unsupported;
+
+		for (AdvancedTextureImage img : originalImageList) {
+			if (complement) {
+				if (img.getState() != filterState)
+					filteredImageList.add(img);
+
+			} else {
+				if (img.getState() == filterState)
+					filteredImageList.add(img);
+
+			}
+
+		}
+
+		mainWindow.loadTextureImages(filteredImageList);
 	}
 
 	public void setStatus(String newStatus) {
@@ -153,17 +188,13 @@ public class ActionController {
 	}
 
 	/**
-	 * Fires the action of the specified action String, e.g. for Menu-Click
-	 * Actions
+	 * To fire menu actions from other packages
 	 * 
 	 * @param action
 	 */
 	public void fireAction(String action) {
-
-		if(action.equals(ToolsMenuActionHandler.FILTER_FINISHED)){
-			mainWindow.getMenu().fireAction(ToolsMenuActionHandler.FILTER_FINISHED,
-					this, this.hashCode(), ToolsMenuActionHandler.FILTER_FINISHED);
-		}
+		mainWindow.getMenu().fireAction(ToolsMenuActionHandler.FILTER_FINISHED,
+				this, this.hashCode(), ToolsMenuActionHandler.FILTER_FINISHED);
 	}
 
 	/**
@@ -209,9 +240,8 @@ public class ActionController {
 	 * 
 	 * @param filter
 	 */
-	public void filterPreviewList(String filter) {
-		mainWindow.getContentContainer().getImageScrollPane()
-				.filterList(filter);
+	public void filterPreviewList(String filter, boolean complement) {
+		loadTexturesInPreviewList(filter, complement);
 	}
 
 	public Object getOption(OptionIdentifierEnum id) {
@@ -238,19 +268,21 @@ public class ActionController {
 		String imagePath = mainWindow.getContentContainer()
 				.getImageScrollPane().getSelectedImageByPath();
 		if (imagePath != null) {
-			getStatusBar().setImageProgressParameter(1);
-			getStatusBar().setImageProgress(1);
-			workingImageSet
-					.getAdvancedTextureImageFromAbsoluteFilePath(imagePath)
-					.processManipulation(
-							(AbstractAttackAlgorithm) attackAlgoFactory
-									.getAlgorithm(attack),
-							(AbstractSelectionAlgorithm) selectionAlgoFactory
-									.getAlgorithm(selection), options,
-							getStatusBar());
-			setTextureIcon(workingImageSet
-					.getAdvancedTextureImageFromAbsoluteFilePath(imagePath));
-			resetAlgorithms();
+			AdvancedTextureImage img = workingImageSet
+					.getAdvancedTextureImageFromAbsoluteFilePath(imagePath);
+			if (img.getState() != EditState.unsupported) {
+				getStatusBar().setImageProgressParameter(1);
+				getStatusBar().setImageProgress(1);
+				img.processManipulation(
+						(AbstractAttackAlgorithm) attackAlgoFactory
+								.getAlgorithm(attack),
+						(AbstractSelectionAlgorithm) selectionAlgoFactory
+								.getAlgorithm(selection), options,
+						getStatusBar());
+				setTextureIcon(workingImageSet
+						.getAdvancedTextureImageFromAbsoluteFilePath(imagePath));
+				resetAlgorithms();
+			}
 
 		} else {
 			JOptionPane.showMessageDialog(null,
@@ -284,10 +316,31 @@ public class ActionController {
 	public void saveTexture() {
 		TexturesDialog textureSaveDialog = new TexturesDialog(
 				TexturesDialog.SAVE_DIALOG);
-		if (textureSaveDialog.showDialog(null, "Speichern") == JFileChooser.APPROVE_OPTION) {
+		if (textureSaveDialog.showDialog(null, "Save") == JFileChooser.APPROVE_OPTION) {
 			workingImageSet.saveTexture(textureSaveDialog.getSelectedFile()
-					.getAbsolutePath(), mainWindow.getContentContainer().getImageScrollPane().getSelectedImageByPath());
-		}		
+					.getAbsolutePath(), mainWindow.getContentContainer()
+					.getImageScrollPane().getSelectedImageByPath());
+		}
+	}
+
+	public void createListOfUnsupportedTextures() {
+		ArrayList<String> unsupportedTexturePaths = workingImageSet
+				.getUnsupportedTexturePaths();
+		JFileChooser pathChooser = new JFileChooser(new File(
+				PropertyUtils.properties.getProperty("lastDir")));
+		pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		if (pathChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			IOUtils.writePathsToTextFile(
+					unsupportedTexturePaths,
+					pathChooser.getSelectedFile().getAbsolutePath()
+							+ System.getProperty("file.separator")
+							+ "unsupportedTextures.txt");
+		}
+	}
+
+	public int getTextureCount() {
+		return workingImageSet.getTextureCount();
 	}
 
 }

@@ -32,12 +32,12 @@ public class TexturesDialog extends JFileChooser {
 			setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			setFileFilter(new FileNameExtensionFilter(
 					"DirectDrawSurface texture", "dds"));
-			setDialogTitle("Texturen wählen...");
+			setDialogTitle("Choose Textures...");
 			setMultiSelectionEnabled(true);
 		} else if (type == SAVE_DIALOG) {
 			setDialogType(SAVE_DIALOG);
 			setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			setDialogTitle("Ort zum speichern der Texturen wählen...");
+			setDialogTitle("Choose place to save the textures...");
 		}
 
 	}

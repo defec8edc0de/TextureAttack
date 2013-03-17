@@ -25,8 +25,6 @@ import javax.swing.event.ListSelectionListener;
 
 import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.AdvancedTextureImage;
-import de.tud.textureAttack.model.AdvancedTextureImage.EditState;
-import de.tud.textureAttack.model.actionHandler.ToolsMenuActionHandler;
 import de.tud.textureAttack.model.io.IOUtils;
 
 public class ImageScrollPane extends JScrollPane {
@@ -63,15 +61,21 @@ public class ImageScrollPane extends JScrollPane {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				ImageScrollPane.this.actionController
-				.setStatus(IOUtils.getFileNameFromPath(ImageScrollPane.this.getSelectedImageByPath()));
-				
-				
+				String absolutePath = ImageScrollPane.this
+						.getSelectedImageByPath();
+				if (absolutePath != null) {
+					ImageScrollPane.this.actionController.setStatus(IOUtils
+							.getFileNameFromPath(absolutePath));
+				}
+
 				if ((e.getButton() == 1) && (e.getClickCount() == 2)) {
+					if (!iconListModel.isEmpty()){
 					ImageScrollPane.this.actionController
 							.setPreviewImage(ImageScrollPane.this.actionController
-									.getSelectedAdvancedTextureImage());
-				}
+									.getAdvancedTextureImageFromAbsolutePath(ImageScrollPane.this
+											.getSelectedImageByPath()));
+					}
+					}
 			}
 
 			@Override
@@ -93,13 +97,16 @@ public class ImageScrollPane extends JScrollPane {
 	public void setIcons(ArrayList<AdvancedTextureImage> images) {
 		if (images != null) {
 			iconListModel.clear();
+			actionController.setStatus("Creating Previewthumbnails.......");
+			actionController.setProgressCount(images.size());
 			for (int i = 0; i < images.size(); i++) {
-				if (images.get(i).getState() != AdvancedTextureImage.EditState.unsupported) {
 					iconListModel.addElement(new ImageIcon(images.get(i)
 							.getThumbnail(), images.get(i).getAbsolutePath()));
-				}
+					actionController.setProgress(i);
+				
 			}
 		}
+		actionController.setStatus(iconListModel.size()+" Textures loaded!");
 	}
 
 	public void setIcon(AdvancedTextureImage image) {
@@ -128,21 +135,6 @@ public class ImageScrollPane extends JScrollPane {
 
 	public int getSelecion() {
 		return selectedIcon;
-	}
-
-	public void filterList(String filter) {
-		
-		if (filter.equals(ToolsMenuActionHandler.FILTER_FINISHED)){
-			for (int i = 0; i < iconListModel.getSize(); i++) {
-				AdvancedTextureImage img = actionController
-						.getAdvancedTextureImageFromAbsolutePath(((ImageIcon) iconListModel
-								.get(i)).getDescription());
-				if (img.getState() == EditState.finished)
-					iconListModel.remove(i);
-			}
-			iconList.repaint();
-			iconList.revalidate();
-		}
 	}
 
 	public String getSelectedImageByPath() {

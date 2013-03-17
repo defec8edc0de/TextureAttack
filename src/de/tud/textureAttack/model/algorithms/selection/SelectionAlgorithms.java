@@ -14,6 +14,7 @@ import de.tud.textureAttack.controller.ActionController;
 import de.tud.textureAttack.model.algorithms.AbstractAlgorithmFactory;
 import de.tud.textureAttack.model.algorithms.selection.colorselection.ColorSelection;
 import de.tud.textureAttack.model.algorithms.selection.grabcut.GrabCutSelection;
+import de.tud.textureAttack.model.algorithms.selection.optimizedcolorselection.OptimizedColorSelection;
 
 /**
  * Stellt im UML-Klassendiagramm "ConcreteCreator" dar, die die konkreten
@@ -32,6 +33,7 @@ public class SelectionAlgorithms extends AbstractAlgorithmFactory {
 	@Override
 	protected void createAlgorithm(ActionController actionController) {
 		algorithms.add(new ColorSelection(actionController));
+		algorithms.add(new OptimizedColorSelection(actionController));		
 		algorithms.add(new GrabCutSelection(actionController));
 	}
 
